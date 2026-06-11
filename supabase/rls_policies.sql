@@ -54,3 +54,8 @@ USING (
         )
     )
 );
+
+-- grants , this will control if the user role can select
+
+GRANT USAGE ON SCHEMA public TO authenticated;
+GRANT SELECT ON knowledge_nodes TO authenticated;
