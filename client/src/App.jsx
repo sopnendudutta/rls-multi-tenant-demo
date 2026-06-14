@@ -11,9 +11,7 @@ function App() {
   const [error, setError] = useState("");
 
   const orderedResults = useMemo(() => {
-    return users
-      .map((user) => results[user.id])
-      .filter(Boolean);
+    return users.map((user) => results[user.id]).filter(Boolean);
   }, [users, results]);
 
   useEffect(() => {
@@ -76,97 +74,105 @@ function App() {
   }
 
   return (
-    <main className="page-shell">
-      <section className="hero">
-        <div>
-          <p className="eyebrow">BRAHMO RLS Assessment</p>
-          <h1>Database-Enforced Multi-Tenant Isolation</h1>
-          <p className="hero-text">
-            This demo proves that PostgreSQL Row-Level Security silently filters
-            healthcare knowledge nodes before the application receives them.
-          </p>
-        </div>
+    <main className="app">
+      <section className="hero-screen">
+        <div className="hero-content">
 
-        <div className="query-box">
-          <span>Same SQL for every user</span>
-          <code>SELECT * FROM knowledge_nodes ORDER BY id;</code>
+
+          <h1>PostgreSQL is the security layer.</h1>
+
+
+
+
+          <div className="hero-actions">
+            <button
+              className="primary-button"
+              onClick={runAllQueries}
+              disabled={loadingUserId !== null || users.length === 0}
+            >
+              {loadingUserId ? "Running RLS checks..." : "Run All Users"}
+            </button>
+
+            <span className="silent-note">
+              Silent exclusion: no access denied errors, no hidden counts.
+            </span>
+          </div>
         </div>
       </section>
 
-      {error && <div className="error-box">{error}</div>}
+      {error && <div className="error-banner">{error}</div>}
 
-      <section className="section-card">
-        <div className="section-heading">
-          <div>
-            <h2>Run the same query as different users</h2>
-            <p>
-              The frontend does not filter rows. Counts below come directly from
-              PostgreSQL RLS.
-            </p>
-          </div>
+      <section className="full-section">
 
-          <button
-            className="primary-button"
-            onClick={runAllQueries}
-            disabled={loadingUserId !== null || users.length === 0}
-          >
-            {loadingUserId ? "Running..." : "Run All Users"}
-          </button>
-        </div>
 
-        <div className="user-grid">
+        <div className="user-list">
           {users.map((user) => {
             const result = results[user.id];
 
             return (
-              <article className="user-card" key={user.id}>
-                <div>
+              <div className="user-row" key={user.id}>
+                <div className="user-main">
                   <h3>{user.name}</h3>
                   <p>{user.description}</p>
                 </div>
 
-                <div className="claim-list">
-                  <span>Org: {user.orgId}</span>
-                  <span>Role: {user.role}</span>
-                  <span>Dept: {user.department}</span>
-                  <span>Ceiling: L{user.ceiling}</span>
-                  <span>
-                    Clearance: {user.clearance ? user.clearance : "none"}
-                  </span>
+                <div className="claims-simple">
+                  <div>
+                    <span>Organization</span>
+                    <strong>{user.orgId}</strong>
+                  </div>
+
+                  <div>
+                    <span>Role</span>
+                    <strong>{user.role}</strong>
+                  </div>
+
+                  <div>
+                    <span>Department</span>
+                    <strong>{user.department}</strong>
+                  </div>
+
+                  <div>
+                    <span>Ceiling</span>
+                    <strong>L{user.ceiling}</strong>
+                  </div>
+
+                  <div>
+                    <span>Clearance</span>
+                    <strong>{user.clearance ? user.clearance : "none"}</strong>
+                  </div>
                 </div>
 
-                <div className="card-footer">
+                <div className="row-action">
                   <strong>{result ? `${result.count} rows` : "Not run"}</strong>
-
                   <button
                     onClick={() => runQueryForUser(user.id)}
                     disabled={loadingUserId !== null}
                   >
-                    {loadingUserId === user.id ? "Running..." : "Run Query"}
+                    {loadingUserId === user.id ? "Running..." : "Run"}
                   </button>
                 </div>
-              </article>
+              </div>
             );
           })}
         </div>
       </section>
 
       {orderedResults.length > 0 && (
-        <section className="section-card">
-          <div className="section-heading">
-            <div>
-              <h2>Same-query comparison</h2>
-              <p>
-                Different counts prove that PostgreSQL is applying user-specific
-                RLS policies.
-              </p>
-            </div>
+        <section className="full-section dark-section">
+          <div className="section-header">
+            <p className="eyebrow">Core Proof</p>
+            <h2>Same query, different users, different rows</h2>
+            <p>
+              Different counts prove the database is enforcing isolation using
+              user claims.
+            </p>
           </div>
 
-          <div className="comparison-grid">
+          <div className="comparison-table">
             {orderedResults.map((result) => (
               <button
-                className="comparison-card"
+                className="comparison-row"
                 key={result.user.id}
                 onClick={() => setSelectedResult(result)}
               >
@@ -180,17 +186,21 @@ function App() {
       )}
 
       {selectedResult && (
-        <section className="section-card">
-          <div className="section-heading">
+        <section className="full-section">
+          <div className="section-header result-header">
             <div>
+              <p className="eyebrow">Returned by PostgreSQL</p>
               <h2>{selectedResult.user.name} result set</h2>
               <p>
-                Silent exclusion: no hidden count, no access denied message, no
-                restricted-row hints.
+                This is the complete result from the user’s perspective. Hidden
+                rows are silently excluded by RLS.
               </p>
             </div>
 
-            <div className="count-badge">{selectedResult.count} rows</div>
+            <div className="big-count">
+              <strong>{selectedResult.count}</strong>
+              <span>visible rows</span>
+            </div>
           </div>
 
           <div className="table-wrap">
@@ -231,18 +241,22 @@ function App() {
         </section>
       )}
 
-      <section className="proof-strip">
+      <section className="proof-band">
         <div>
-          <strong>Proof 1</strong>
-          <span>Same SQL, different users, different rows.</span>
+          <strong>Organization Isolation</strong>
+          <span>City Clinic users see zero Supra rows.</span>
         </div>
         <div>
-          <strong>Proof 2</strong>
-          <span>Frontend does not filter restricted records.</span>
+          <strong>Department Scoping</strong>
+          <span>Users see own department, hospital-wide, and Zone 2 rows.</span>
         </div>
         <div>
-          <strong>Proof 3</strong>
-          <span>PostgreSQL RLS silently excludes unauthorized rows.</span>
+          <strong>Permission Ceiling</strong>
+          <span>Junior users cannot see HOD/admin-level records.</span>
+        </div>
+        <div>
+          <strong>Compliance Filtering</strong>
+          <span>MNPI/confidential rows require matching clearance.</span>
         </div>
       </section>
     </main>
