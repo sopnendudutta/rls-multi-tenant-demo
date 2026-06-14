@@ -29,7 +29,7 @@ INSERT INTO knowledge_nodes (
     'CONSTRAINT',
     'Warfarin-NSAID Never Combine',
     'CRITICAL: Never prescribe NSAIDs to patients on Warfarin. GI bleed risk.',
-    3,
+    10,
     NULL,
     2,
     '{}'
@@ -40,7 +40,7 @@ INSERT INTO knowledge_nodes (
     'CONSTRAINT',
     'Two-Person Transfusion Verification',
     'All blood transfusions require two-person verification.',
-    3,
+    10,
     NULL,
     2,
     '{}'
@@ -51,7 +51,7 @@ INSERT INTO knowledge_nodes (
     'CONSTRAINT',
     'Hand Hygiene 5-Moment',
     'WHO 5-moment hand hygiene. Supra target 95%.',
-    3,
+    10,
     NULL,
     2,
     '{}'
@@ -62,7 +62,7 @@ INSERT INTO knowledge_nodes (
     'FACT',
     'Emergency Codes',
     'Blue=arrest, Red=fire, Pink=abduction, Grey=combative.',
-    3,
+    10,
     NULL,
     2,
     '{}'
@@ -347,7 +347,7 @@ INSERT INTO knowledge_nodes (
     'CONSTRAINT',
     'Hand Hygiene Policy',
     'Alcohol-based handrub mandatory before patient contact.',
-    3,
+    8,
     NULL,
     2,
     '{}'
@@ -358,7 +358,7 @@ INSERT INTO knowledge_nodes (
     'DECISION',
     'Paracetamol Dosing',
     'Adults: 500mg QDS max. Children: weight-based dosing.',
-    5,
+    8,
     'medicine',
     1,
     '{}'
@@ -380,7 +380,7 @@ INSERT INTO knowledge_nodes (
     'DECISION',
     'Referral Policy',
     'Refer to district hospital for any surgical case.',
-    5,
+    8,
     'medicine',
     1,
     '{}'
