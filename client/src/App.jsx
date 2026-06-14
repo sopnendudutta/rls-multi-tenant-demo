@@ -9,6 +9,7 @@ function App() {
   const [selectedResult, setSelectedResult] = useState(null);
   const [loadingUserId, setLoadingUserId] = useState(null);
   const [error, setError] = useState("");
+  const [policies, setPolicies] = useState([]);
 
   const orderedResults = useMemo(() => {
     return users.map((user) => results[user.id]).filter(Boolean);
@@ -16,21 +17,38 @@ function App() {
 
   useEffect(() => {
     async function loadUsers() {
+      const response = await fetch(`${API_URL}/api/users`);
+
+      if (!response.ok) {
+        throw new Error("Failed to load users");
+      }
+
+      const data = await response.json();
+      setUsers(data.users || []);
+    }
+
+    async function loadPolicies() {
+      const response = await fetch(`${API_URL}/api/policies`);
+
+      if (!response.ok) {
+        throw new Error("Failed to load RLS policies");
+      }
+
+      const data = await response.json();
+      setPolicies(data.policies || []);
+    }
+
+    async function loadInitialData() {
       try {
-        const response = await fetch(`${API_URL}/api/users`);
-
-        if (!response.ok) {
-          throw new Error("Failed to load users");
-        }
-
-        const data = await response.json();
-        setUsers(data.users || []);
+        setError("");
+        await loadUsers();
+        await loadPolicies();
       } catch (err) {
         setError(err.message);
       }
     }
 
-    loadUsers();
+    loadInitialData();
   }, []);
 
   async function runQueryForUser(userId) {
@@ -73,13 +91,26 @@ function App() {
     }
   }
 
+  function formatRoles(roles) {
+    if (Array.isArray(roles)) {
+      return roles.join(", ");
+    }
+
+    if (typeof roles === "string") {
+      return roles;
+    }
+
+    return "public";
+  }
+
   return (
     <main className="app">
       <section className="hero-screen">
         <div className="hero-content">
-
+          <p className="eyebrow">BRAHMO </p>
 
           <h1>PostgreSQL is the security layer.</h1>
+
 
 
 
@@ -240,6 +271,35 @@ function App() {
           </div>
         </section>
       )}
+
+      <section className="full-section policy-section">
+        <div className="section-header">
+          <p className="eyebrow">Active PostgreSQL Policy</p>
+          <h2>RLS policy enforced on knowledge_nodes</h2>
+          <p>
+            This policy is read from PostgreSQL system metadata. It shows the
+            database rule responsible for silently excluding unauthorized rows.
+          </p>
+        </div>
+
+        <div className="policy-list">
+          {policies.length === 0 ? (
+            <p>No policies loaded yet.</p>
+          ) : (
+            policies.map((policy) => (
+              <div className="policy-block" key={policy.policyname}>
+                <div className="policy-meta">
+                  <strong>{policy.policyname}</strong>
+                  <span>Command: {policy.cmd}</span>
+                  <span>Roles: {formatRoles(policy.roles)}</span>
+                </div>
+
+                <pre>{policy.qual}</pre>
+              </div>
+            ))
+          )}
+        </div>
+      </section>
 
       <section className="proof-band">
         <div>

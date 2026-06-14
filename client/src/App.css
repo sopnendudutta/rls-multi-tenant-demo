@@ -344,6 +344,50 @@ td {
   line-height: 1.6;
 }
 
+.policy-section {
+  background: #fffaf4;
+}
+
+.policy-list {
+  display: grid;
+  gap: 24px;
+}
+
+.policy-block {
+  border-top: 1px solid rgba(31, 41, 51, 0.16);
+  padding-top: 24px;
+}
+
+.policy-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.policy-meta strong {
+  color: #1f2933;
+  font-size: 1.1rem;
+}
+
+.policy-meta span {
+  color: #64748b;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.policy-block pre {
+  margin: 0;
+  background: #1f2933;
+  color: #fffaf4;
+  padding: 22px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  line-height: 1.55;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 1000px) {
   .user-row {
     grid-template-columns: 1fr;

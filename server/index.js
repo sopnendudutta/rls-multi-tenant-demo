@@ -101,6 +101,35 @@ app.post("/api/query/run", async (req, res) => {
     }
 });
 
+app.get("/api/policies", async (req, res) => {
+    try {
+        const result = await pool.query(`
+      SELECT
+        policyname,
+        cmd,
+        roles,
+        qual,
+        with_check
+      FROM pg_policies
+      WHERE schemaname = 'public'
+        AND tablename = 'knowledge_nodes'
+      ORDER BY policyname;
+    `);
+
+        res.json({
+            table: "knowledge_nodes",
+            policies: result.rows,
+        });
+    } catch (error) {
+        console.error("Failed to fetch RLS policies:", error);
+
+        res.status(500).json({
+            error: "Failed to fetch RLS policies",
+            details: error.message,
+        });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`BRAHMO RLS Demo API running on port ${PORT}`);
 });
